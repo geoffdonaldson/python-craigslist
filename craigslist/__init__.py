@@ -180,7 +180,7 @@ class CraigslistBase(object):
                 totalcount = soup.find('span', {'class': 'totalcount'})
                 total = int(totalcount.text) if totalcount else 0
 
-            for row in soup.find_all('p', {'class': 'result-info'}):
+            for row in soup.find_all('li', {'class': 'result-row'}):
                 if limit is not None and total_so_far >= limit:
                     break
                 self.logger.debug('Processing %s of %s results ...',
@@ -204,6 +204,16 @@ class CraigslistBase(object):
                 tags_span = row.find('span', {'class': 'result-tags'})
                 tags = tags_span.text if tags_span else ''
 
+                thumbnail = ""
+                image_row = row.find('a', {'class': 'result-image'})
+                img = image_row.get('data-ids') # Take that Craig!
+                if img is None:
+                    thumbnail = "https://upload.wikimedia.org/wikipedia/commons/thumb/a/ac/No_image_available.svg/1000px-No_image_available.svg.png" # No-image image
+                else:
+                    img = str(img)[2:19] # eats up the first image ID
+                    img = img.replace(',', '')
+                    thumbnail = "https://images.craigslist.org/" + img + "_300x300.jpg" # this took me forever
+
                 result = {'id': id,
                           'name': name,
                           'url': url,
@@ -211,6 +221,7 @@ class CraigslistBase(object):
                           'price': price.text if price else None,
                           'where': where,
                           'has_image': 'pic' in tags,
+                          'thumbnail' : thumbnail,
                           # TODO: Look into this, looks like all shwo map now
                           'has_map': 'map' in tags,
                           'geotag': None}
