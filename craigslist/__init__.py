@@ -208,7 +208,7 @@ class CraigslistBase(object):
                 image_row = row.find('a', {'class': 'result-image'})
                 img = image_row.get('data-ids') # Take that Craig!
                 if img is None:
-                    thumbnail = "https://upload.wikimedia.org/wikipedia/commons/thumb/a/ac/No_image_available.svg/1000px-No_image_available.svg.png" # No-image image
+                    thumbnail = "https://upload.wikimedia.org/wikipedia/commons/thumb/a/ac/No_image_available.svg/100px-No_image_available.svg.png" # No-image image
                 else:
                     img = str(img)[2:19] # eats up the first image ID
                     img = img.replace(',', '')
